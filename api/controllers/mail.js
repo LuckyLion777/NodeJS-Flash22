@@ -1,0 +1,109 @@
+/* eslint no-console: ["error", { allow: ["log", "warn", "error"] }] */
+
+// import Autopilot from 'autopilot-api';
+// import phone from 'phone';
+import util from 'util';
+import xss from 'xss';
+import zipcodes from 'zipcodes';
+
+// import config from '../../server-config';
+
+// DO NOT REMOVE THIS COMMENT!!!
+//  I know that code is quite ugly in this file.
+//  Be carefull with changing it.
+//  We have unit tests that covers nearly all actions called by frontend code.
+//  But if you change code here, you will have to
+//  1) verify that unit tests PASS (quite simple)
+//  2) verify that frontend code is not broken.
+//  It is much more complicated task - frontend code has worse quality.
+//
+//
+//  - Anatolij
+
+// const autopilot = new Autopilot(config.autopilot.key);
+
+function getStateInfo(req, res) {
+  const stateNumber = xss(req.params.stateNumber);
+  const addr = zipcodes.lookup(stateNumber);
+  if (addr !== undefined) {
+    return res.success({ data: addr });
+  }
+  return res.error('state not found', 200);
+}
+
+// async function triggerJourney(req, res) {
+//   const { contactid } = req.query;
+//   const hookid = xss(req.query.hookid) || '0001';
+//   const response = await autopilot.journeys.add(hookid, xss(contactid));
+//   console.log(response);
+//   res.success();
+// }
+
+
+// function mapToStateDetails(data) {
+//   return {
+//     zip: data[0],
+//     type: data[1],
+//     primary_city: data[2],
+//     acceptable_cities: data[3],
+//     unacceptable_cities: data[4],
+//     state: data[5],
+//     county: data[6],
+//     timezone: data[7],
+//     area_codes: data[8],
+//     latitude: data[9],
+//     longitude: data[10],
+//     world_region: data[11],
+//     country: data[12],
+//     decommissioned: data[13],
+//     estimated_population: data[14],
+//     notes: data[15]
+//   };
+// }
+
+export function mapToAutopilotJson(data) {
+  return {
+    FirstName: xss(data.firstName),
+    LastName: xss(data.lastName),
+    Email: xss(data.emailAddress),
+    MobilePhone: xss(data.phoneNumber),
+    MailingStreet: util.format('%s %s', xss(data.address1), xss(data.address2)),
+    MailingCity: xss(data.city),
+    MailingState: xss(data.state),
+    MailingPostalCode: xss(data.postalCode),
+  };
+}
+
+export function mapToLeadoutpostJson(data) {
+  return {
+    firstName: xss(data.firstName),
+    lastName: xss(data.lastName),
+    email: xss(data.emailAddress),
+    phone: xss(data.phoneNumber),
+    address: util.format('%s %s', xss(data.address1), xss(data.address2)),
+    city: xss(data.city),
+    state: xss(data.state),
+    zip: xss(data.postalCode),
+  };
+}
+
+// function verifyPhoneNumber(req, res) {
+//   const number = req.params.phone;
+//   console.log(phone(number, 'US')[0]);
+//   if (!phone(number, 'US')[0]) {
+//     return res.error('Invalid phone number');
+//   }
+//
+//   return res.success({ formatted: phone(number, 'US')[0] });
+// }
+
+function ping(req, res) {
+  return res.json({ msg: 'PONG' });
+}
+
+export default {
+  getStateInfo,
+  // triggerJourney,
+  // verifyPhoneNumber,
+  ping,
+};

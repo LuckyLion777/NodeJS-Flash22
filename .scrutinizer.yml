@@ -1,0 +1,12 @@
+checks:
+  javascript: true
+filter:
+  excluded_paths:
+build:
+  tests:
+    override:
+      - eslint-run "frontend/scripts/app/**/*.js"
+      - eslint-run "api/**/*.js"
+      - eslint-run "config/**/*.js"
+      - eslint-run "test/**/*.js"
+      - eslint-run "*.js"

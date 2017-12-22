@@ -1,0 +1,20 @@
+engines:
+  duplication:
+    enabled: false
+    config:
+      languages:
+        - javascript
+ratings:
+  paths:
+    - frontend/scripts/app/**
+    - api/**
+    - config/**
+    - test/**
+    - index.js
+    - app.js
+    - server-config.js
+    - risingStack.js
+    - trace.config.js
+exclude_paths:
+  - "**/node_modules/**/*"
+  - "**/frontend/scripts/libs/**/*"
